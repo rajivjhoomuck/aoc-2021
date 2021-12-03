@@ -17,3 +17,5 @@ public func load<A>(
 public extension String {
   var lines: [String] { split(separator: "\n").map(Self.init) }
 }
+
+public let parseIntFromBinaryStringRep: (String) -> Int? = 2 |> flip(curry(Int.init(_: radix:)))
