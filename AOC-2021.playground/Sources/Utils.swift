@@ -4,11 +4,15 @@ public struct FileLoadingError: Error {
   let desc: String
 }
 
-public func load(fileNamed name: String, withExtension `extension`: String) throws -> String {
+public func load<A>(
+  fileNamed name: String,
+  withExtension `extension`: String,
+  lineTransform: (String) -> A?
+) throws -> [A] {
   guard let url = Bundle.main.url(forResource: name, withExtension: `extension`)
   else { throw FileLoadingError(desc: "Invalid url") }
 
-  return try String(contentsOf: url)
+  return try String(contentsOf: url).lines.compactMap(lineTransform)
 }
 
 public extension String {
