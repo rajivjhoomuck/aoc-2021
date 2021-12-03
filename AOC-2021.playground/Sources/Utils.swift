@@ -6,10 +6,9 @@ public struct FileLoadingError: Error {
 
 public func load<A>(
   fileNamed name: String,
-  withExtension `extension`: String,
   lineTransform: (String) -> A?
 ) throws -> [A] {
-  guard let url = Bundle.main.url(forResource: name, withExtension: `extension`)
+  guard let url = Bundle.main.url(forResource: name, withExtension: "txt")
   else { throw FileLoadingError(desc: "Invalid url") }
 
   return try String(contentsOf: url).lines.compactMap(lineTransform)

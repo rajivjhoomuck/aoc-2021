@@ -1,7 +1,7 @@
 import Foundation
 
 //: # Part 1
-let parsedInts = try! load(fileNamed: "data", withExtension: "txt", lineTransform: Int.init)
+let parsedInts = try! load(fileNamed: "data", lineTransform: Int.init)
 let partOneAnswer = zip(parsedInts[...], parsedInts[1...]).map(<).filter(id).count
 
 //: # Part 2

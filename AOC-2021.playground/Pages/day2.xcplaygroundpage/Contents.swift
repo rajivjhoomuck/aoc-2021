@@ -16,40 +16,30 @@ enum Command {
   }
 }
 
-let displacement = try! load(
-  fileNamed: "data",
-  withExtension: "txt",
-  lineTransform: Command.init(rawValue:)
-).reduce(into: (x: 0, y: 0), { acc, command in
-  switch command {
-  case let .x(x): acc.x += x
-  case let .y(y): acc.y += y
-  }
-})
+let commands = try! load(fileNamed: "data", lineTransform: Command.init(rawValue:))
+let displacement = commands
+  .reduce(into: (x: 0, y: 0), { acc, command in
+    switch command {
+    case let .x(x): acc.x += x
+    case let .y(y): acc.y += y
+    }
+  })
 
 let partOneAnswer = displacement.x * displacement.y
 
 //: # Part 2
 struct State {
-  var aim: Int = 0
-  var depth: Int = 0
-  var displacement: Int = 0
+  var aim = 0
+  var depth = 0
+  var horizontalDisplacement = 0
 
   mutating func roger(command: Command) {
     switch command {
-    case let .x(x):
-      displacement += x
-      depth += aim * x
-    case let .y(y):
-      aim += y
+    case let .x(x): horizontalDisplacement += x; depth += aim * x
+    case let .y(y): aim += y
     }
   }
 }
 
-let reducedState = try! load(
-  fileNamed: "data",
-  withExtension: "txt",
-  lineTransform: Command.init(rawValue:)
-).reduce(into: State(), { state, command in state.roger(command: command) })
-
-let partTwoAnswer = reducedState.displacement * reducedState.depth
+let reducedState = commands.reduce(into: State(), { state, command in state.roger(command: command) })
+let partTwoAnswer = reducedState.horizontalDisplacement * reducedState.depth

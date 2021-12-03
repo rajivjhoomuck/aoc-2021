@@ -1,0 +1,3 @@
+- Each day's solution will be provided in a separate playground page.
+  - See **aoc-2021/AOC-2021.playground/Pages/**
+- Some helper files are added for some functional fun
