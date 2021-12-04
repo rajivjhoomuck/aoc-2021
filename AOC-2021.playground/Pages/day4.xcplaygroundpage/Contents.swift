@@ -9,19 +9,24 @@ struct Board: Equatable {
     self.columns = transpose(rows)
   }
 
-  func isWinner(for draws: [Int]) -> Bool { (rows + columns).map({ Set(draws).isSuperset(of: $0) }).reduce(false, { $0 || $1 }) }
+  func isWinner(for draw: [Int]) -> Bool { (rows + columns).map({ Set(draw).isSuperset(of: $0) }).reduce(false, { $0 || $1 }) }
 }
 
 struct GameState {
   var contenders: [Board] = []
+  var leaderboards: [([Int], [Board])] = []
   var lastWinners: ([Int], [Board])?
   var lastWin: ([Int], Board)? { zip2(lastWinners?.0, lastWinners?.1.last) }
+  var firstWin: ([Int], Board)? { zip2(leaderboards.first?.0, leaderboards.first?.1.first) }
 
   mutating func play(_ draw: [Int]) {
     let wins = draw |> flip(Board.isWinner)
     let winners = contenders.filter(wins)
     contenders = contenders.filter(wins >>> (!))
-    if !winners.isEmpty { lastWinners = (draw, winners) }
+    if !winners.isEmpty {
+      leaderboards.append((draw, winners))
+      lastWinners = (draw, winners)
+    }
   }
 }
 
@@ -35,23 +40,11 @@ func gameStats(fromFile fileName: String) -> ([[Int]], [Board]) {
   return (drawSequences, boards)
 }
 
-func firstWinningBoard(with draw: [Int], and boards: [Board]) -> ([Int], Board)? {
-  zip2(draw, boards.first(where: draw |> flip(Board.isWinner))) ?? nil
-}
-
 func calculateScore(draw: [Int], board: Board) -> Int {
   draw.reversed()[0] * board.rows.flatMap(id).filter({ !draw.contains($0) }).reduce(0, +)
 }
-
+//: * Experiment: Answers for both parts
 let (draws, boards) = gameStats(fromFile: "data")
-
-//: * Experiment: Part One Answer
-let partOneAnswer = zip(draws, Array(repeating: boards, count: draws.count))
-  .compactMap { firstWinningBoard(with: $0, and: $1) }
-  .first.map { calculateScore(draw: $0, board:$1) }
-
-//: * Experiment: Part One Answer
-let partTwoAnswer = draws
-  .reduce(into: GameState(contenders: boards), { state, draw in state.play(draw) })
-  .lastWin
-  .map(calculateScore(draw: board:))
+let playedGame = draws.reduce(into: GameState(contenders: boards), { state, draw in state.play(draw) })
+let partOneAnswer = playedGame.firstWin.map(calculateScore(draw: board:))
+let partTwoAnswer = playedGame.lastWin.map(calculateScore(draw: board:))
