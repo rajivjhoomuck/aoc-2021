@@ -5,7 +5,7 @@ let lines = try! load(fileNamed: "data", lineTransform: id)
 let linesCount = lines.count
 let seed = Array(repeating: 0, count: lines[0].count)
 let gammaReport = lines
-  .reduce(seed, { acc, line in zip(line.compactMap(String.init >>> Int.init), acc).map(+) })
+  .reduce(seed, { acc, line in zip(line.compactMap(char2Int), acc).map(+) })
   .map({ $0 >= (linesCount / 2) ? "1" : "0" })
   .reduce("", +)
   .trimmingCharacters(in: .whitespacesAndNewlines)

@@ -5,7 +5,7 @@ struct Board: Equatable {
   let rows: [[Int]]
 
   init(rawValue: String) {
-    self.rows = rawValue.split(separator: "\n").map({ $0.split(separator: " ").compactMap(String.init >>> Int.init) })
+    self.rows = rawValue.split(separator: "\n").map({ $0.split(separator: " ").compactMap(substring2Int) })
     self.columns = transpose(rows)
   }
 
@@ -35,7 +35,7 @@ func gameStats(fromFile fileName: String) -> ([[Int]], [Board]) {
   func _draws(_ input: [Int]) -> [[Int]] { (4..<input.count).map({ Array(input[0...$0]) }) }
 
   let output = try! load(fileNamed: fileName).components(separatedBy: "\n\n")
-  let drawSequences = output[0].split(separator: ",").compactMap(String.init >>> Int.init) |> _draws
+  let drawSequences = output[0].split(separator: ",").compactMap(substring2Int) |> _draws
   let boards = output.dropFirst().map(Board.init)
   return (drawSequences, boards)
 }
@@ -46,5 +46,5 @@ func calculateScore(draw: [Int], board: Board) -> Int {
 //: * Experiment: Answers for both parts
 let (draws, boards) = gameStats(fromFile: "data")
 let playedGame = draws.reduce(into: GameState(contenders: boards), { state, draw in state.play(draw) })
-let partOneAnswer = playedGame.firstWin.map(calculateScore(draw: board:))
-let partTwoAnswer = playedGame.lastWin.map(calculateScore(draw: board:))
+let partOneAnswer = playedGame.firstWin.map(calculateScore)
+let partTwoAnswer = playedGame.lastWin.map(calculateScore)

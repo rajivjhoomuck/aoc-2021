@@ -28,3 +28,9 @@ public func transpose<A>(_ input: [[A]]) -> [[A]] {
   guard !input.head.isEmpty else { return [] }
   return [input.map(\.head)] + transpose(input.map(\.tail))
 }
+
+public let substring2Int: (Substring) -> Int? = String.init >>> Int.init
+public let char2Int: (Character) -> Int? = String.init >>> Int.init
+
+public func isGreaterThan(number: Int) -> (Int) -> Bool { { x in x > number } }
+public func compare(_ comparison: @escaping (Int, Int) -> Bool, _ number: Int) -> (Int) -> Bool { { comparison($0, number) } }
